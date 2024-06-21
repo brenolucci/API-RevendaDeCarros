@@ -30,8 +30,6 @@ class Modelos
     public function montaModelos(array $dados): Modelo
     {
         $modelo = new Modelo();
-        $marca = new Marca();
-        $propsMarca = get_class_vars(get_class($marca));
 
         if (!empty($dados['id'])) {
             $modelo->setId((int) $dados['id']);
