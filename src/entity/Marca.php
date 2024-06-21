@@ -19,25 +19,25 @@ class Marca
     private string $nome;
 
     /**
-     * Url da logomarca da marca
+     * Url da logo_urlmarca da marca
      *
      * @var string
      */
-    private string $logo;
+    private string $logo_url;
 
     /**
      * Data de criação da marca
      *
-     * @var int
+     * @var \DateTime
      */
-    private int $created_at;
+    private \DateTime $criado_em;
 
     /**
      * Data da última atualização da marca
      *
-     * @var int
+     * @var \DateTime
      */
-    private int $updated_at;
+    private \DateTime $atualizado_em;
 
 
     /**
@@ -87,37 +87,37 @@ class Marca
     }
 
     /**
-     * Define a data que a logo foi registrada
+     * Define a data que a logo_url foi registrada
      *
-     * @param integer $created_at
+     * @param \DateTime $criado_em
      * @return \RevendaTeste\Entity\Marca
      */
-    public function setCreated(int $created_at): \RevendaTeste\Entity\Marca
+    public function setCriadoem(\DateTime $criado_em): \RevendaTeste\Entity\Marca
     {
-        $this->created_at = $created_at;
+        $this->criado_em = $criado_em;
 
         return $this;
     }
 
     /**
-     * Retorna a data que a logo foi registrada
+     * Retorna a data que a logo_url foi registrada
      *
-     * @return integer
+     * @return \DateTime
      */
-    public function getCreated(): int
+    public function getCriadoem(): \DateTime
     {
-        return $this->created_at;
+        return $this->criado_em;
     }
 
     /**
      * Define a data de atualização
      *
-     * @param integer $updated_at
+     * @param \DateTime $atualizado_em
      * @return \RevendaTeste\Entity\Marca
      */
-    public function setUpdated(int $updated_at): \RevendaTeste\Entity\Marca
+    public function setAtualizadoem(\DateTime $atualizado_em): \RevendaTeste\Entity\Marca
     {
-        $this->updated_at = $updated_at;
+        $this->atualizado_em = $atualizado_em;
 
         return $this;
     }
@@ -125,10 +125,10 @@ class Marca
     /**
      * Retorna a data de atualização
      *
-     * @return integer
+     * @return \DateTime
      */
-    public function getUpdated(): int
+    public function getAtualizadoem(): \DateTime
     {
-        return $this->updated_at;
+        return $this->atualizado_em;
     }
 }

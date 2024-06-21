@@ -30,8 +30,8 @@ class Modelo
     /**
      * Define o Id do modelo
      *
-     * @param integer $id
-     * @return void
+     * @param int $id
+     * @return \RevendaTeste\Entity\Modelo
      */
     public function setId(int $id): \RevendaTeste\Entity\Modelo
     {
@@ -43,7 +43,7 @@ class Modelo
     /**
      * Retorna o id do modelo
      *
-     * @return integer
+     * @return int
      */
     public function getId(): int
     {
@@ -66,7 +66,7 @@ class Modelo
     /**
      * Retorna o id do modelo
      *
-     * @return void
+     * @return string
      */
     public function getNome(): string
     {
@@ -74,7 +74,7 @@ class Modelo
     }
 
     /**
-     * Define o id da marca
+     * Define a marca
      *
      * @param Marca $marca
      * @return Marca
@@ -87,7 +87,7 @@ class Modelo
     }
 
     /**
-     * Retorna o id da marca
+     * Retorna a marca
      *
      * @return Marca
      */
@@ -96,17 +96,3 @@ class Modelo
         return (is_null($this->marca)) ? new Marca() : $this->marca;
     }
 }
-
-
-// Exemplo de como uma injeção de dependência funcionaria nesse caso da marca.
-// $m = new Modelo();
-
-// $m->setId(1)
-//     ->setNome('Teste')
-//     ->setMarca(
-//         $m->getMarca()
-//             ->setId(2)
-//             ->setNome('Teste')
-//     );
-
-

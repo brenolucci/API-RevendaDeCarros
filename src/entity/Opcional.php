@@ -2,28 +2,29 @@
 
 namespace RevendaTeste\Entity;
 
-class Combustivel
+class Opcional
 {
     /**
-     * Id do combustivel
+     * Id de combustivel
      *
      * @var int
      */
     private int $id;
+
     /**
-     * Nome do combustivel
+     * Nome de combustivel
      *
      * @var string
      */
     private string $nome;
 
     /**
-     * Define o Id do combustivel
+     * Define o id de combustivel
      *
      * @param int $id
-     * @return \RevendaTeste\Entity\Combustivel
+     * @return \RevendaTeste\Entity\Opcional
      */
-    public function setId(int $id): \RevendaTeste\Entity\Combustivel
+    public function setId(int $id): \RevendaTeste\Entity\Opcional
     {
         $this->id = $id;
 
@@ -31,7 +32,7 @@ class Combustivel
     }
 
     /**
-     * Retorna o id do combustivel
+     * Retorna o valor de combustivel
      *
      * @return int
      */
@@ -41,20 +42,20 @@ class Combustivel
     }
 
     /**
-     * Define o nome do combustivel
+     * Define o nome de combustivel
      *
      * @param string $nome
-     * @return \RevendaTeste\Entity\Combustivel
+     * @return \RevendaTeste\Entity\Opcional
      */
-    public function setNome(string $nome): \RevendaTeste\Entity\Combustivel
+    public function setNome(string $nome): \RevendaTeste\Entity\Opcional
     {
-        $this->nome - $nome;
+        $this->nome = $nome;
 
         return $this;
     }
 
     /**
-     * Retorna o nome do combustivel
+     * Retorna o nome de combustivel
      *
      * @return string
      */

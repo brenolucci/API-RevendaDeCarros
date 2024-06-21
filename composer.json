@@ -1,8 +1,8 @@
 {
     "name": "app/revenda",
     "autoload": {
-   "psr-4": {
-        "RevendaTeste\\": "src/"
+        "psr-4": {
+            "RevendaTeste\\": "src/"
+        }
     }
- }
 }
