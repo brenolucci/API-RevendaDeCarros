@@ -48,7 +48,7 @@ class Combustivel
      */
     public function setNome(string $nome): \RevendaTeste\Entity\Combustivel
     {
-        $this->nome - $nome;
+        $this->nome = $nome;
 
         return $this;
     }

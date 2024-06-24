@@ -52,7 +52,7 @@ class Versao
     /**
      * Ano do modelo;
      *
-     * @var integer
+     * @var int
      */
     private int $ano_modelo;
 
@@ -101,7 +101,7 @@ class Versao
      */
     public function setNome(string $nome): \RevendaTeste\Entity\Versao
     {
-        $this->nome - $nome;
+        $this->nome = $nome;
 
         return $this;
     }
@@ -165,7 +165,7 @@ class Versao
     /**
      * Define o preço da versão
      *
-     * @param integer $preco
+     * @param int $preco
      * @return \RevendaTeste\Entity\Versao
      */
     public function setPreco(int $preco): \RevendaTeste\Entity\Versao
@@ -178,7 +178,7 @@ class Versao
     /**
      * Retorna o preço da versão 
      *
-     * @return integer
+     * @return int
      */
     public function getPreco(): int
     {
@@ -188,10 +188,10 @@ class Versao
     /**
      * Define o ano da versão 
      *
-     * @param string $ano
+     * @param int $ano
      * @return \RevendaTeste\Entity\Versao
      */
-    public function setAno(string $ano): \RevendaTeste\Entity\Versao
+    public function setAno(int $ano): \RevendaTeste\Entity\Versao
     {
         $this->ano = $ano;
 
@@ -201,9 +201,9 @@ class Versao
     /**
      * Retorna o ano da versão 
      *
-     * @return string
+     * @return int
      */
-    public function getAno(): string
+    public function getAno(): int
     {
         return $this->ano;
     }
@@ -213,6 +213,11 @@ class Versao
         $this->ano_modelo = $ano_modelo;
 
         return $this;
+    }
+
+    public function getAnoModelo(): int
+    {
+        return $this->ano_modelo;
     }
 
     /**

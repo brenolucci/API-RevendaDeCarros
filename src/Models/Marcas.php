@@ -51,8 +51,6 @@ class Marcas
     {
         $marca = new Marca();
 
-        // $propriedadesDaMarca = get_class_vars(get_class($marca));
-
         if (!empty($dados['id'])) {
             $marca->setId((int) $dados['id']);
         }
@@ -61,6 +59,9 @@ class Marcas
         }
         if (!empty($dados['criado_em'])) {
             $marca->setCriadoem(new \DateTime($dados['criado_em']));
+        }
+        if (!empty($dados['atualizado_em'])) {
+            $marca->setAtualizadoem(new \DateTime($dados['atualizado_em']));
         }
 
         return $marca;

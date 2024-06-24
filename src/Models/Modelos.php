@@ -17,6 +17,16 @@ class Modelos
         $this->conn = (new DataBase())->getConnection();
     }
 
+    public function buscaPorId($id)
+    {
+        $sql = 'SELECT id, nome, marca_id FROM modelos WHERE id = ' . $id . ' LIMIT 1';
+        $result = $this->conn->query($sql);
+
+        return $this->montaModelos(
+            $result->fetch_assoc()
+        );
+    }
+
     public function buscarModelos(): array
     {
         $sql = 'SELECT id, nome, marca_id FROM modelos';

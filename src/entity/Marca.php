@@ -23,7 +23,7 @@ class Marca
      *
      * @var string
      */
-    private string $logo_url;
+    private string $logo_url = '';
 
     /**
      * Data de criação da marca
@@ -38,7 +38,6 @@ class Marca
      * @var \DateTime
      */
     private \DateTime $atualizado_em;
-
 
     /**
      * Define o Id da marca
