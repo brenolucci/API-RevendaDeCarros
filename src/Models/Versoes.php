@@ -41,51 +41,36 @@ class Versoes
         return $versoes;
     }
 
-    function cadastraVersao(array $data)
+    function cadastraVersao(array $data): Versao
     {
-        try {
-            $sql = "INSERT INTO versoes (
-                modelo_id, 
-                combustivel_id, 
-                nome, 
-                preco, 
-                ano, 
-                ano_modelo, 
-                quilometragem, 
-                localizacao
-            ) 
-            VALUES (
-                {$data['modelo_id']}, 
-                {$data['combustivel_id']}, 
-                '{$data['nome']}', 
-                {$data['preco']}, 
-                {$data['ano']}, 
-                {$data['ano_modelo']}, 
-                {$data['quilometragem']}, 
-                '{$data['localizacao']}'
-            )";
-            $result = $this->conn->query($sql);
+        $sql = "INSERT INTO versoes (
+            modelo_id, 
+            combustivel_id, 
+            nome, 
+            preco, 
+            ano, 
+            ano_modelo, 
+            quilometragem, 
+            localizacao
+        ) 
+        VALUES (
+            {$data['modelo_id']}, 
+            {$data['combustivel_id']}, 
+            '{$data['nome']}', 
+            {$data['preco']}, 
+            {$data['ano']}, 
+            {$data['ano_modelo']}, 
+            {$data['quilometragem']}, 
+            '{$data['localizacao']}'
+        )";
+        $result = $this->conn->query($sql);
 
-            // Obtém o ID recém inserido
-            $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM versoes';
-            $result = mysqli_fetch_assoc($this->conn->query($sql));
-            $data['id'] = $result['last_id'];
+        // Obtém o ID recém inserido
+        $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM versoes';
+        $result = mysqli_fetch_assoc($this->conn->query($sql));
+        $data['id'] = $result['last_id'];
 
-            $statusCode = 201;
-            $result = [
-                'message' => 'Dados Cadastrados com sucesso!',
-                'data' => $data,
-            ];
-
-        } catch (\Exception $e) {
-            $statusCode = $e->getCode();
-            $result = [
-                'error' => true,
-                'message' => $e->getMessage(),
-            ];
-        }
-        http_response_code($statusCode);
-        echo json_encode($result);
+        return $this->montaVersao($data);
     }
 
     public function montaVersao(array $dados): Versao

@@ -45,7 +45,7 @@ class Combustiveis
             $combustivel->setId((int) $dados['id']);
         }
         if (!empty($dados['nome'])) {
-            $combustivel->setNome((int) $dados['nome']);
+            $combustivel->setNome($dados['nome']);
         }
 
         return $combustivel;
