@@ -4,9 +4,11 @@ namespace RevendaTeste\Models;
 
 use RevendaTeste\Entity\Combustivel;
 use \RevendaTeste\ORM\Database;
+use \RevendaTeste\Traits\ObjectToArray;
 
 class Combustiveis
 {
+    use ObjectToArray;
 
     private \mysqli $conn;
 
@@ -26,12 +28,12 @@ class Combustiveis
 
     }
 
-    public function buscaCombustiveis(): array
+    public function buscaCombustiveis(bool $asArray = false): array
     {
         $sql = 'SELECT id, nome FROM combustiveis';
         $result = $this->conn->query($sql);
         while ($row = $result->fetch_assoc()) {
-            $combustiveis[] = $this->montaCombustiveis($row);
+            $combustiveis[] = ($asArray) ? $this->toArray($this->montaCombustiveis($row)) : $this->montaCombustiveis($row);
         }
 
         return $combustiveis;

@@ -4,9 +4,11 @@ namespace RevendaTeste\Models;
 
 use RevendaTeste\Entity\Opcional;
 use \RevendaTeste\ORM\Database;
+use \RevendaTeste\Traits\ObjectToArray;
 
 class Opcionais
 {
+    use ObjectToArray;
 
     private \mysqli $conn;
 
@@ -26,12 +28,12 @@ class Opcionais
 
     }
 
-    public function buscaOpcionais(): array
+    public function buscaOpcionais(bool $asArray = false): array
     {
         $sql = 'SELECT id, nome FROM opcionais';
         $result = $this->conn->query($sql);
         while ($row = $result->fetch_assoc()) {
-            $opcionais[] = $this->montaOpcionais($row);
+            $opcionais[] = ($asArray) ? $this->toArray($this->montaOpcionais($row)) : $this->montaOpcionais($row);
         }
 
         return $opcionais;
@@ -45,7 +47,7 @@ class Opcionais
             $opcional->setId((int) $dados['id']);
         }
         if (!empty($dados['nome'])) {
-            $opcional->setNome((int) $dados['nome']);
+            $opcional->setNome($dados['nome']);
         }
 
         return $opcional;

@@ -60,7 +60,7 @@ class Versoes
             {$data['preco']}, 
             {$data['ano']}, 
             {$data['ano_modelo']}, 
-            {$data['quilometragem']}, 
+            '{$data['quilometragem']}', 
             '{$data['localizacao']}'
         )";
         $result = $this->conn->query($sql);

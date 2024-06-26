@@ -8,9 +8,8 @@ header('Content-Type: application/json');
 
 require_once (realpath(dirname(__FILE__) . '/../../') . '/vendor/autoload.php');
 
-use \RevendaTeste\Models\Modelos;
+use RevendaTeste\Models\Opcionais;
 
-$modelos = (new Modelos)->buscarModelos(true);
+$opcionais = (new Opcionais())->buscaOpcionais(true);
 
-echo json_encode($modelos, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-
+echo json_encode($opcionais, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
