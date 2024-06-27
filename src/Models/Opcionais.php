@@ -17,14 +17,17 @@ class Opcionais
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId($id)
+    public function buscaPorId(int $id)
     {
         $sql = 'SELECT id, nome FROM opcionais WHERE id = ' . $id . ' LIMIT 1';
         $result = $this->conn->query($sql);
+        $dados = $result->fetch_assoc();
 
-        return $this->montaOpcionais(
-            $result->fetch_assoc()
-        );
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Opcional não encontrado ou inexistente!', 422);
+        }
+
+        return $this->montaOpcionais($dados);
 
     }
 

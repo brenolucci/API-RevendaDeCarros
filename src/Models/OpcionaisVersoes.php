@@ -2,12 +2,14 @@
 
 namespace RevendaTeste\Models;
 
-use RevendaTeste\Entity\OpcionalVersao;
 use RevendaTeste\ORM\Database;
+use RevendaTeste\Traits\ObjectToArray;
+use RevendaTeste\Entity\OpcionalVersao;
 use RevendaTeste\Models\{Versoes, Opcionais};
 
 class OpcionaisVersoes
 {
+    use ObjectToArray;
 
     private \mysqli $conn;
 
@@ -16,14 +18,35 @@ class OpcionaisVersoes
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId($id)
+    /**
+     * Retorna o OpcionvalVersao ou null para o caso de não existir
+     *
+     * @param int $id
+     * @return OpcionalVersao|null
+     */
+    public function buscaPorId($id): OpcionalVersao|null
     {
         $sql = 'SELECT id, versao_id, opcional_id FROM opcionais_versoes WHERE id = ' . $id . ' LIMIT 1';
         $result = $this->conn->query($sql);
+        $dados = $result->fetch_assoc();
 
-        return $this->montaOpcionalVersao(
-            $result->fetch_assoc()
-        );
+        return $this->montaOpcionalVersao($dados);
+    }
+
+    /**
+     * Retorna o objeto OpcionalVersão através do código da versão e opcional
+     *
+     * @param int $versaoId
+     * @param int $opcionalId
+     * @return OpcionalVersao|null
+     */
+    public function buscarPorVersaoIdEOpcionalId(int $versaoId, int $opcionalId): OpcionalVersao|null
+    {
+        $sql = 'SELECT id, versao_id, opcional_id FROM opcionais_versoes WHERE versao_id = ' . $versaoId . ' AND opcional_id = ' . $opcionalId;
+        $result = $this->conn->query($sql);
+        $dados = $result->fetch_assoc();
+
+        return $this->montaOpcionalVersao($dados);
     }
 
     public function buscaOpcionaisVersoes(): array
@@ -37,19 +60,69 @@ class OpcionaisVersoes
         return $opcionaisVersoes;
     }
 
-    public function montaOpcionalVersao(array $dados): OpcionalVersao
+    /**
+     * Vincula a versão à lista de opcionais informados e retorna um array de objeto OpcionalVersao
+     *
+     * @param array $data
+     * @return OpcionalVersao[]
+     */
+    function cadastraOpcionalVersao(array $data): array
     {
-        $opcionalVersao = new OpcionalVersao();
+        $retorno = [];
 
+        $versoesTable = new Versoes();
+        $versao = $versoesTable->buscaPorId($data['versao_id']);
+
+        $opcionalTable = new Opcionais();
+        foreach ($data['opcional_id'] as $indice => $value) {
+            $opcional = $opcionalTable->buscaPorId($value);
+
+            // Valida SE JÁ EXISTE
+            $opcionalVersao = $this->buscarPorVersaoIdEOpcionalId($versao->getId(), $opcional->getId());
+            if (!is_null($opcionalVersao)) {
+                // throw new \InvalidArgumentException("Opcional {$opcional->getNome()} já cadastrado para a Versão {$versao->getNome()}", 422);
+                $retorno[] = $opcionalVersao;
+                continue;
+            }
+
+            // Grava
+            $sql = "INSERT INTO opcionais_versoes (versao_id, opcional_id) VALUES ({$versao->getId()}, {$opcional->getId()})";
+            $result = $this->conn->query($sql);
+
+            // Obtém o ID recém inserido
+            $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM opcionais_versoes';
+            $result = mysqli_fetch_assoc($this->conn->query($sql));
+
+            // Empilha no retorno o objeto gravado
+            $retorno[] = (new OpcionalVersao())->setId($result['last_id'])
+                ->setVersao($versao)
+                ->setOpcional($opcional);
+        }
+        return $retorno;
+    }
+
+    /**
+     * Monta os dados do OpcionalVersao
+     *
+     * @param array|null $dados
+     * @return OpcionalVersao|null
+     */
+    public function montaOpcionalVersao(array|null $dados): OpcionalVersao|null
+    {
+        if (is_null($dados)) {
+            return $dados;
+        }
+
+        $opcionalVersao = new OpcionalVersao();
 
         if (!empty($dados['id'])) {
             $opcionalVersao->setId((int) $dados['id']);
         }
-        if (!empty($dados['modelo_id'])) {
+        if (!empty($dados['versao_id'])) {
             $versao = new Versoes();
             $opcionalVersao->setVersao($versao->buscaPorId($dados['versao_id']));
         }
-        if (!empty($dados['combustivel_id'])) {
+        if (!empty($dados['opcional_id'])) {
             $opcional = new Opcionais();
             $opcionalVersao->setOpcional($opcional->buscaPorId($dados['opcional_id']));
         }

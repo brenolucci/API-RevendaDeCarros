@@ -20,14 +20,23 @@ class Versoes
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId($id)
+    /**
+     * Retorna os dados de uma versão através do seu Id
+     *
+     * @param int $id
+     * @return Versao
+     */
+    public function buscaPorId(int $id): Versao
     {
         $sql = 'SELECT id, nome, modelo_id, combustivel_id, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes WHERE id = ' . $id . ' LIMIT 1';
         $result = $this->conn->query($sql);
+        $dados = $result->fetch_assoc();
 
-        return $this->montaVersao(
-            $result->fetch_assoc()
-        );
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
+        }
+
+        return $this->montaVersao($dados);
     }
 
     public function buscaVersoes(bool $asArray = false): array
@@ -77,36 +86,19 @@ class Versoes
     {
         $versao = new Versao();
 
+        $modelo = new Modelos();
+        $combustivel = new Combustiveis();
 
-        if (!empty($dados['id'])) {
-            $versao->setId((int) $dados['id']);
-        }
-        if (!empty($dados['modelo_id'])) {
-            $modelo = new Modelos();
-            $versao->setModelo($modelo->buscaPorId($dados['modelo_id']));
-        }
-        if (!empty($dados['combustivel_id'])) {
-            $combustivel = new Combustiveis();
-            $versao->setCombustivel($combustivel->buscaPorId($dados['combustivel_id']));
-        }
-        if (!empty($dados['nome'])) {
-            $versao->setNome((string) $dados['nome']);
-        }
-        if (!empty($dados['preco'])) {
-            $versao->setPreco((int) $dados['preco']);
-        }
-        if (!empty($dados['ano'])) {
-            $versao->setAno((int) $dados['ano']);
-        }
-        if (!empty($dados['ano_modelo'])) {
-            $versao->setAnoModelo((int) $dados['ano_modelo']);
-        }
-        if (!empty($dados['quilometragem'])) {
-            $versao->setQuilometragem((string) $dados['quilometragem']);
-        }
-        if (!empty($dados['localizacao'])) {
-            $versao->setLocalizacao((string) $dados['localizacao']);
-        }
+        $versao->setId((int) $dados['id'])
+            ->setNome((string) $dados['nome'])
+            ->setPreco((int) $dados['preco'])
+            ->setAno((int) $dados['ano'])
+            ->setAnoModelo((int) $dados['ano_modelo'])
+            ->setQuilometragem((string) $dados['quilometragem'])
+            ->setLocalizacao((string) $dados['localizacao']);
+
+        $versao->setModelo($modelo->buscaPorId($dados['modelo_id']));
+        $versao->setCombustivel($combustivel->buscaPorId($dados['combustivel_id']));
 
         return $versao;
     }

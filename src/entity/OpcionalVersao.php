@@ -56,13 +56,13 @@ class OpcionalVersao
      * Define a versao do opcional_versao
      *
      * @param Versao $versao
-     * @return Versao
+     * @return OpcionalVersao
      */
-    public function setVersao(Versao $versao): Versao
+    public function setVersao(Versao $versao): OpcionalVersao
     {
         $this->versao = $versao;
 
-        return $this->versao;
+        return $this;
     }
 
     /**
@@ -79,13 +79,13 @@ class OpcionalVersao
      * Define o opcional de opcional_versao
      *
      * @param Opcional $opcional
-     * @return Opcional
+     * @return OpcionalVersao
      */
-    public function setOpcional(Opcional $opcional): Opcional
+    public function setOpcional(Opcional $opcional): OpcionalVersao
     {
         $this->opcional = $opcional;
 
-        return $this->opcional;
+        return $this;
     }
 
     /**

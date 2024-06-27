@@ -2,6 +2,8 @@
 
 namespace RevendaTeste\Controllers;
 
+use RevendaTeste\Models\OpcionaisVersoes;
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json');
@@ -14,19 +16,22 @@ try {
 
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // @todo Iniciar transaction - usar o DB??
-    $versoes = new Versoes();
-    $versao = $versoes->cadastraVersao($data);
 
-    //@todo Cadastrar opcionais - injetando o código da versão
-    //@todo Cadastrar iamgens - injetando o código da versão
+    // @todo - criar classe para validar dados do Request
+    // $validatedData = new OpcionalVersaoRequest($data);
 
-    // @todo Finalizar transaction - usar o DB??
+    $opcionais = new OpcionaisVersoes();
+    $versaoOpcional = $opcionais->cadastraOpcionalVersao($data);
+
+    // Converter os objetos internos da collection para array
+    foreach ($versaoOpcional as $umOpcional => $opcional) {
+        $versaoOpcional[$umOpcional] = $opcionais->toArray($opcional);
+    }
 
     $statusCode = 201;
     $result = [
         'message' => 'Dados Cadastrados com sucesso!',
-        'data' => $versoes->toArray($versao),
+        'data' => $versaoOpcional,
     ];
 
 } catch (\Exception $e) {
