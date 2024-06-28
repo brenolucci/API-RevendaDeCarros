@@ -2,7 +2,10 @@
 
 namespace RevendaTeste\Controllers;
 
+use RevendaTeste\Entity\Versao;
+use RevendaTeste\Models\Opcionais;
 use RevendaTeste\Models\OpcionaisVersoes;
+use RevendaTeste\Requests\VersaoOpcionaisRequest;
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
@@ -16,12 +19,10 @@ try {
 
     $data = json_decode(file_get_contents('php://input'), true);
 
-
-    // @todo - criar classe para validar dados do Request
-    // $validatedData = new OpcionalVersaoRequest($data);
+    $validatedData = (new VersaoOpcionaisRequest($data));
 
     $opcionais = new OpcionaisVersoes();
-    $versaoOpcional = $opcionais->cadastraOpcionalVersao($data);
+    $versaoOpcional = $opcionais->cadastraOpcionalVersao($validatedData);
 
     // Converter os objetos internos da collection para array
     foreach ($versaoOpcional as $umOpcional => $opcional) {

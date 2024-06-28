@@ -28,7 +28,22 @@ class Opcionais
         }
 
         return $this->montaOpcionais($dados);
+    }
 
+    /**
+     * Retona um array list com os Opcionais através do array de Ids informados
+     *
+     * @param array $listaId
+     * @return Opcional[]
+     */
+    public function buscarPorListaDeId(array $listaId): array
+    {
+        $data = [];
+        foreach ($listaId as $id) {
+            $data[] = $this->buscaPorId($id);
+        }
+
+        return $data;
     }
 
     public function buscaOpcionais(bool $asArray = false): array

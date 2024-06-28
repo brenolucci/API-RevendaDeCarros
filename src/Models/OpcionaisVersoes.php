@@ -3,9 +3,10 @@
 namespace RevendaTeste\Models;
 
 use RevendaTeste\ORM\Database;
-use RevendaTeste\Traits\ObjectToArray;
 use RevendaTeste\Entity\OpcionalVersao;
 use RevendaTeste\Models\{Versoes, Opcionais};
+use RevendaTeste\Requests\VersaoOpcionaisRequest;
+use RevendaTeste\Traits\{ObjectToArray, Validations};
 
 class OpcionaisVersoes
 {
@@ -66,27 +67,22 @@ class OpcionaisVersoes
      * @param array $data
      * @return OpcionalVersao[]
      */
-    function cadastraOpcionalVersao(array $data): array
+    use Validations;
+    function cadastraOpcionalVersao(VersaoOpcionaisRequest $data): array
     {
+
         $retorno = [];
 
-        $versoesTable = new Versoes();
-        $versao = $versoesTable->buscaPorId($data['versao_id']);
+        foreach ($data->getListaOpcional() as $opcional) {
 
-        $opcionalTable = new Opcionais();
-        foreach ($data['opcional_id'] as $indice => $value) {
-            $opcional = $opcionalTable->buscaPorId($value);
-
-            // Valida SE JÁ EXISTE
-            $opcionalVersao = $this->buscarPorVersaoIdEOpcionalId($versao->getId(), $opcional->getId());
+            $opcionalVersao = $this->buscarPorVersaoIdEOpcionalId($data->getVersao()->getId(), $opcional->getId());
             if (!is_null($opcionalVersao)) {
-                // throw new \InvalidArgumentException("Opcional {$opcional->getNome()} já cadastrado para a Versão {$versao->getNome()}", 422);
                 $retorno[] = $opcionalVersao;
                 continue;
             }
 
             // Grava
-            $sql = "INSERT INTO opcionais_versoes (versao_id, opcional_id) VALUES ({$versao->getId()}, {$opcional->getId()})";
+            $sql = "INSERT INTO opcionais_versoes (versao_id, opcional_id) VALUES ({$data->getVersao()->getId()}, {$opcional->getId()})";
             $result = $this->conn->query($sql);
 
             // Obtém o ID recém inserido
@@ -95,9 +91,10 @@ class OpcionaisVersoes
 
             // Empilha no retorno o objeto gravado
             $retorno[] = (new OpcionalVersao())->setId($result['last_id'])
-                ->setVersao($versao)
+                ->setVersao($data->getVersao())
                 ->setOpcional($opcional);
         }
+
         return $retorno;
     }
 
