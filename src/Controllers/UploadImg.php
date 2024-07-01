@@ -50,6 +50,7 @@ try {
 
         $response['status'] = 'ok';
         $response['message'] = 'Arquivos enviados com sucesso!';
+        $response['post_data'] = print_r($_POST, 1);
     else:
         $response['message'] = 'Nenhum arquivo enviado!';
     endif;

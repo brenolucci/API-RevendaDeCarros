@@ -14,6 +14,11 @@ try {
 
     $data = json_decode(file_get_contents('php://input'), true);
 
+    print_r($data);
+    $images = $data->$_FILES;
+    var_dump($_FILES);
+    die;
+
     // @todo Iniciar transaction - usar o DB??
     $versoes = new Versoes();
     $versao = $versoes->cadastraVersao($data);
