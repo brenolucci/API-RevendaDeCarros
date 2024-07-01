@@ -4,6 +4,7 @@ namespace RevendaTeste\Requests;
 
 use RevendaTeste\Entity\Versao;
 use RevendaTeste\Models\Modelos;
+use RevendaTeste\Models\Versoes;
 
 class VersaoRequest
 {

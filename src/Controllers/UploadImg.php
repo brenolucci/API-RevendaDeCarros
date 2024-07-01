@@ -5,14 +5,45 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json');
 
-use \RevendaTeste\Models\Modelos;
-use \RevendaTeste\Models\Versoes;
+use RevendaTeste\Models\Versoes;
+use RevendaTeste\Models\OpcionaisVersoes;
+use RevendaTeste\Requests\VersaoOpcionaisRequest;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('FILES_DIR', realpath(dirname(__FILE__) . '/../../') . DS . 'files' . DS);
 
 $response = ['status' => 'error', 'message' => ''];
 try {
+    $data = $_POST;
+
+    $versoes = new Versoes();
+    $versao = $versoes->cadastraVersao($data);
+
+    //Converte a string de opcionais $data['opcionais'] em um array de int.
+    $opcoes = explode(',', $data['opcionais']);
+    $opcionais = array_map('intval', $opcoes);
+
+    // var_dump($versao->getId());
+    // var_dump($opcionais);
+    // die;
+    //Cadastra opcionais - injetando o id da versão e os opcionais.
+    $validatedData = (new VersaoOpcionaisRequest($opcionais, $versao->getId()));
+
+    $opcionais = new OpcionaisVersoes();
+    $versaoOpcional = $opcionais->cadastraOpcionalVersao($validatedData);
+
+    // Converter os objetos internos da collection para array
+    foreach ($versaoOpcional as $umOpcional => $opcional) {
+        $versaoOpcional[$umOpcional] = $opcionais->toArray($opcional);
+    }
+
+    // $statusCode = 201;
+    // $result = [
+    //     'message' => 'Dados Cadastrados com sucesso!',
+    //     'data' => $versoes->toArray($versao),
+    // ];
+
+    //@todo Cadastrar iamgens - injetando o código da versão
     if (!empty($_FILES['files'])):
         foreach ($_FILES['files']['tmp_name'] as $key => $tmpName):
             if (!is_uploaded_file($tmpName)):
@@ -50,7 +81,7 @@ try {
 
         $response['status'] = 'ok';
         $response['message'] = 'Arquivos enviados com sucesso!';
-        $response['post_data'] = print_r($_POST, 1);
+        // $response['post_data'] = print_r($_POST, 1);
     else:
         $response['message'] = 'Nenhum arquivo enviado!';
     endif;

@@ -21,15 +21,15 @@ class VersaoOpcionaisRequest
      *  'opcional_id' => array
      * ]
      */
-    public function __construct(array $data = [])
+    public function __construct(array $opcionais = [], int $versao)
     {
         $this->listaOpcional = [];
 
-        if (!empty($data['versao_id'])) {
-            $this->setVersaoPorId($data['versao_id']);
+        if (!empty($versao)) {
+            $this->setVersaoPorId($versao);
         }
-        if (!empty($data['opcional_id'])) {
-            $this->setListaOpcionalPorId($data['opcional_id']);
+        if (!empty($opcionais)) {
+            $this->setListaOpcionalPorId($opcionais);
         }
     }
 
