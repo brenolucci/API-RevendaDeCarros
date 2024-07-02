@@ -23,9 +23,9 @@ class Imagem
     /**
      * Data de criação da imagem
      *
-     * @var \DateTime
+     * @var string;
      */
-    private \DateTime $criado_em;
+    private string $criado_em;
 
     /**
      * Versao da imagem
@@ -83,10 +83,10 @@ class Imagem
     /**
      * Define a data de criação da imagem no banco de dados
      *
-     * @param \DateTime $criado_em
+     * @param string $criado_em
      * @return \RevendaTeste\Entity\Imagem
      */
-    public function setCriadoem(\DateTime $criado_em): \RevendaTeste\Entity\Imagem
+    public function setCriadoem(string $criado_em): \RevendaTeste\Entity\Imagem
     {
         $this->criado_em = $criado_em;
 
@@ -96,9 +96,9 @@ class Imagem
     /**
      * Retorna a data de criação da imagem no banco de dados
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getCriadoem(): \DateTime
+    public function getCriadoem(): string
     {
         return $this->criado_em;
     }

@@ -8,6 +8,7 @@ header('Content-Type: application/json');
 use RevendaTeste\Models\Versoes;
 use RevendaTeste\Models\OpcionaisVersoes;
 use RevendaTeste\Requests\VersaoOpcionaisRequest;
+use RevendaTeste\Models\Imagens;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('FILES_DIR', realpath(dirname(__FILE__) . '/../../') . DS . 'files' . DS);
@@ -23,9 +24,6 @@ try {
     $opcoes = explode(',', $data['opcionais']);
     $opcionais = array_map('intval', $opcoes);
 
-    // var_dump($versao->getId());
-    // var_dump($opcionais);
-    // die;
     //Cadastra opcionais - injetando o id da versão e os opcionais.
     $validatedData = (new VersaoOpcionaisRequest($opcionais, $versao->getId()));
 
@@ -37,13 +35,7 @@ try {
         $versaoOpcional[$umOpcional] = $opcionais->toArray($opcional);
     }
 
-    // $statusCode = 201;
-    // $result = [
-    //     'message' => 'Dados Cadastrados com sucesso!',
-    //     'data' => $versoes->toArray($versao),
-    // ];
-
-    //@todo Cadastrar iamgens - injetando o código da versão
+    // Cadastrar iamgens - injetando o código da versão
     if (!empty($_FILES['files'])):
         foreach ($_FILES['files']['tmp_name'] as $key => $tmpName):
             if (!is_uploaded_file($tmpName)):
@@ -74,6 +66,9 @@ try {
             endforeach;
 
             $newName = uniqid(time()) . '.' . $extensao;
+            $imagens = new Imagens;
+            $imagem = $imagens->cadastraImagem($versao->getId(), $dir . $newName);
+
             if (move_uploaded_file($tmpName, $dir . $newName) === false):
                 throw new Exception("Falha movendo o arquivo {$_FILES['files']['name'][$key]} para o servidor com o novo nome {$newName}!");
             endif;
@@ -81,7 +76,6 @@ try {
 
         $response['status'] = 'ok';
         $response['message'] = 'Arquivos enviados com sucesso!';
-        // $response['post_data'] = print_r($_POST, 1);
     else:
         $response['message'] = 'Nenhum arquivo enviado!';
     endif;

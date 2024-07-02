@@ -26,6 +26,23 @@ class Imagens
         );
     }
 
+    public function cadastraImagem(int $versao, string $url)
+    {
+        $data = [];
+        $sql = "INSERT INTO imagens (versao_id, img_url) VALUES ({$versao}, '{$url}')";
+
+        $result = ($this->conn->query($sql));
+
+        $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM versoes';
+        $result = mysqli_fetch_assoc($this->conn->query($sql));
+
+        $imagem = $this->buscaPorId($result['last_id']);
+
+
+
+        return $this->montaImagens($result);
+    }
+
     public function buscarImagens(): array
     {
         $sql = 'SELECT id, img_url, criado_em, versao_id FROM imagens';
