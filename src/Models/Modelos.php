@@ -19,9 +19,25 @@ class Modelos
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId($id)
+    public function buscaPorId(int $id): Modelo
     {
         $sql = 'SELECT id, nome, marca_id FROM modelos WHERE id = ' . $id . ' LIMIT 1';
+        $result = $this->conn->query($sql);
+
+        return $this->montaModelos(
+            $result->fetch_assoc()
+        );
+    }
+
+    /**
+     * Retorna o modelo a partir do nome enviado
+     *
+     * @param string $nome
+     * @return Modelo|null
+     */
+    public function buscaPorNome(string $nome): Modelo|null
+    {
+        $sql = 'SELECT id, nome, marca_id FROM modelos WHERE nome = "' . $nome . '" LIMIT 1';
         $result = $this->conn->query($sql);
 
         return $this->montaModelos(
@@ -49,8 +65,18 @@ class Modelos
         return $modelos;
     }
 
-    public function montaModelos(array $dados): Modelo
+    /**
+     * Monta o modelo a partir dos dados enviados ou retorna null caso os dados estejam vazios
+     *
+     * @param array $dados
+     * @return Modelo|null
+     */
+    public function montaModelos(array|null $dados): Modelo|null
     {
+        if (is_null($dados)) {
+            return $dados;
+        }
+
         $modelo = new Modelo();
 
         if (!empty($dados['id'])) {

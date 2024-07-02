@@ -39,12 +39,12 @@ try {
     if (!empty($_FILES['files'])):
         foreach ($_FILES['files']['tmp_name'] as $key => $tmpName):
             if (!is_uploaded_file($tmpName)):
-                throw new Exception('Arquivo inválido para upload: ' . error_get_last());
+                throw new Exception('Arquivo inválido para upload: ' . error_get_last(), 422);
             endif;
 
             $extensao = strtolower(pathinfo($_FILES['files']['name'][$key], PATHINFO_EXTENSION));
             if (!in_array($extensao, ['jpg', 'jpeg', 'webp', 'png', 'gif', 'tiff'])):
-                throw new Exception('Formato de arquivo inválido!');
+                throw new Exception('Formato de arquivo inválido!', 422);
             endif;
 
             $created = new \DateTime();
@@ -60,7 +60,7 @@ try {
 
                 if (file_exists($dir) === false):
                     if (mkdir($dir, 0775, true) === false):
-                        throw new Exception("Falha criando o diretório {$dir} no servidor!");
+                        throw new Exception("Falha criando o diretório {$dir} no servidor!", 400);
                     endif;
                 endif;
             endforeach;
@@ -75,12 +75,13 @@ try {
         endforeach;
 
         $response['status'] = 'ok';
-        $response['message'] = 'Arquivos enviados com sucesso!';
+        $response['message'] = 'Versão cadastrada com sucesso!';
     else:
         $response['message'] = 'Nenhum arquivo enviado!';
     endif;
 } catch (\Exception $e) {
     $response['message'] = $e->getMessage();
+    http_response_code($e->getCode());
 }
 
 echo json_encode($response);

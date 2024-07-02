@@ -39,6 +39,18 @@ class Versoes
         return $this->montaVersao($dados);
     }
 
+    public function filtraVersoes($conditions)
+    {
+        $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes';
+
+
+        if (!empty($conditions)) {
+            $sql .= $conditions;
+        }
+
+        return $sql;
+    }
+
     public function buscaVersoes(bool $asArray = false): array
     {
         $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes';
