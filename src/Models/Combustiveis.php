@@ -17,9 +17,32 @@ class Combustiveis
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId($id)
+    /**
+     * Retorna os dados de combustivel através do id fornecido
+     *
+     * @param int $id
+     * @return Combustivel
+     */
+    public function buscaPorId(int $id): Combustivel
     {
         $sql = 'SELECT id, nome FROM combustiveis WHERE id = ' . $id . ' LIMIT 1';
+        $result = $this->conn->query($sql);
+
+        return $this->montaCombustiveis(
+            $result->fetch_assoc()
+        );
+
+    }
+
+    /**
+     * Retorna os dados de combustível através do nome fornecido.
+     *
+     * @param string $nome
+     * @return Combustivel
+     */
+    public function buscaPorNome(string $nome): Combustivel
+    {
+        $sql = 'SELECT id, nome FROM combustiveis WHERE nome = ' . "'{$nome}'" . ' LIMIT 1';
         $result = $this->conn->query($sql);
 
         return $this->montaCombustiveis(

@@ -9,16 +9,9 @@ use RevendaTeste\Models\Modelos;
 use RevendaTeste\Models\Combustiveis;
 use RevendaTeste\Traits\ObjectToArray;
 
-class Versoes
+class Versoes extends Database
 {
     use ObjectToArray;
-
-    private \mysqli $conn;
-
-    public function __construct()
-    {
-        $this->conn = (new DataBase())->getConnection();
-    }
 
     /**
      * Retorna os dados de uma versão através do seu Id
@@ -29,7 +22,7 @@ class Versoes
     public function buscaPorId(int $id): Versao
     {
         $sql = 'SELECT id, nome, modelo_id, combustivel_id, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes WHERE id = ' . $id . ' LIMIT 1';
-        $result = $this->conn->query($sql);
+        $result = $this->getConnection()->query($sql);
         $dados = $result->fetch_assoc();
 
         if (is_null($dados)) {
@@ -39,9 +32,74 @@ class Versoes
         return $this->montaVersao($dados);
     }
 
+    public function buscaFiltrada(string $sqlFiltro, bool $asArray = false): array
+    {
+        $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes ' . $sqlFiltro;
+        var_dump($sql);
+        die;
+        $result = $this->getConnection()->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            $versoes[] = ($asArray) ? $this->toArray($this->montaVersao($row)) : $this->montaVersao($row);
+        }
+
+        return $versoes;
+
+    }
+
+    /**
+     * Retorna os dados de uma versão através do ano
+     *
+     * @param integer $ano
+     * @return Versao
+     */
+    public function buscaPorAno(int $ano): Versao
+    {
+
+        $sql = 'SELECT id, nome, modelo_id, combustivel_id, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes WHERE ano = ' . $ano . ' LIMIT 1';
+        $result = $this->getConnection()->query($sql);
+        $dados = $result->fetch_assoc();
+
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
+        }
+
+        return $this->montaVersao($dados);
+    }
+
+
+    public function buscaPorPreco(int $preco): Versao
+    {
+
+        $sql = 'SELECT id, nome, modelo_id, combustivel_id, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes WHERE preco = ' . $preco . ' LIMIT 1';
+        $result = $this->getConnection()->query($sql);
+        $dados = $result->fetch_assoc();
+
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
+        }
+
+
+        return $this->montaVersao($dados);
+    }
+
+
+    public function buscaPorKm(string $km): Versao
+    {
+
+        $sql = 'SELECT id, nome, modelo_id, combustivel_id, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes WHERE quilometragem = ' . "'{$km}'" . ' LIMIT 1';
+        $result = $this->getConnection()->query($sql);
+        $dados = $result->fetch_assoc();
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
+        }
+
+
+        return $this->montaVersao($dados);
+    }
+
     public function filtraVersoes($conditions)
     {
-        $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes';
+        $sql = 'SELECT id, modelo_id, combustivel_id, nome, km, ano, ano_modelo, quilometragem, localizacao FROM versoes';
 
 
         if (!empty($conditions)) {
@@ -54,7 +112,7 @@ class Versoes
     public function buscaVersoes(bool $asArray = false): array
     {
         $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes';
-        $result = $this->conn->query($sql);
+        $result = $this->getConnection()->query($sql);
         while ($row = $result->fetch_assoc()) {
             $versoes[] = ($asArray) ? $this->toArray($this->montaVersao($row)) : $this->montaVersao($row);
         }
@@ -84,11 +142,11 @@ class Versoes
             '{$data['quilometragem']}', 
             '{$data['localizacao']}'
         )";
-        $result = $this->conn->query($sql);
+        $result = $this->getConnection()->query($sql);
 
         // Obtém o ID recém inserido
         $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM versoes';
-        $result = mysqli_fetch_assoc($this->conn->query($sql));
+        $result = mysqli_fetch_assoc($this->getConnection()->query($sql));
         $data['id'] = $result['last_id'];
 
         return $this->montaVersao($data);

@@ -78,6 +78,22 @@ class Database
     {
         return $this->conn;
     }
+
+    function beginTransaction()
+    {
+        mysqli_begin_transaction($this->conn);
+    }
+
+    function commit()
+    {
+        print_r('commit');
+        return mysqli_commit($this->conn);
+    }
+
+    function rollback()
+    {
+        return mysqli_rollback($this->conn);
+    }
 }
 
 

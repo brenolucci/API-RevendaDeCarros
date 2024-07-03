@@ -23,9 +23,31 @@ class Marcas
         return $marca;
     }
 
+    /**
+     * Retorna a marca através do id inserido
+     *
+     * @param integer $id
+     * @return Marca
+     */
     public function buscarPorId(int $id): Marca
     {
         $sql = 'SELECT id, nome, logo_url, criado_em, atualizado_em FROM marcas WHERE id = ' . $id . ' LIMIT 1';
+        $result = $this->conn->query($sql);
+
+        return $this->montaMarca(
+            $result->fetch_assoc()
+        );
+    }
+
+    /**
+     * Retorna a marca através do nome fornecido
+     *
+     * @param string $nome
+     * @return Marca
+     */
+    public function buscaPorNome(string $nome): Marca
+    {
+        $sql = 'SELECT id, nome, logo_url, criado_em, atualizado_em FROM marcas WHERE nome = ' . "'{$nome}'" . ' LIMIT 1';
         $result = $this->conn->query($sql);
 
         return $this->montaMarca(
