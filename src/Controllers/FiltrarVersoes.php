@@ -22,11 +22,8 @@ $filtrosPermitidos = ['marca', 'modelo', 'ano', 'preco', 'quilometragem', 'combu
 
 $filtrosValidos = array_intersect($filtrosPermitidos, array_keys($_GET));
 $condicoes = montarCondicoes($filtrosValidos, $_GET);
-var_dump($condicoes);
 
 $sqlConditions = (empty($condicoes)) ? '' : 'WHERE ' . implode(' AND ', $condicoes);
-
-var_dump($sqlConditions);
 
 $versao = (new Versoes())->buscaFiltrada($sqlConditions, true);
 echo json_encode($versao, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -71,19 +68,19 @@ function montarCondicoes(array $filtros, array $dados): array
     if (in_array('ano', $filtros)) {
         $ano = (new Versoes())->buscaPorAno(trim($dados['ano']));
         if (!is_null($ano)) {
-            $condicoes[] = "ano = {$ano->getAno()}";
+            $condicoes[] = "ano >= {$ano->getAno()}";
         }
     }
     if (in_array('preco', $filtros)) {
         $preco = (new Versoes())->buscaPorPreco(trim($dados['preco']));
         if (!is_null($preco)) {
-            $condicoes[] = "preco = {$preco->getPreco()}";
+            $condicoes[] = "preco <= {$preco->getPreco()}";
         }
     }
     if (in_array('quilometragem', $filtros)) {
         $quilometragem = (new Versoes())->buscaPorKm(trim($dados['quilometragem']));
         if (!is_null($quilometragem)) {
-            $condicoes[] = "quilometragem = {$quilometragem->getQuilometragem()}";
+            $condicoes[] = "quilometragem < {$quilometragem->getQuilometragem()}";
         }
     }
     if (in_array('combustivel', $filtros)) {
@@ -93,12 +90,20 @@ function montarCondicoes(array $filtros, array $dados): array
         }
     }
     if (in_array('opcionais', $filtros)) {
-        foreach (explode(',', $dados['opcionais']) as $opcional) {
-            # code...
-            $opcionais = (new Opcionais())->buscaPorId($opcional);
-            if (!is_null($opcionais)) {
-                $condicoes[] = "INNER JOIN opcionais_versoes ON id = Versao_id INNER JOIN opcionais ON opcional_versao = {$opcionais->getId()}";
+        $listaOpcionais = explode(',', $dados['opcionais']);
+        foreach ($listaOpcionais as $nomeOpcional) {
+            $opcional = (new Opcionais())->buscaPorNome(trim($nomeOpcional));
+            if (is_null($opcional)) {
+                continue;
             }
+
+            $condicoes[] = "EXISTS (
+                SELECT id
+                FROM opcionais_versoes AS ov
+                WHERE 
+                    ov.versao_id = versoes.id AND
+                    ov.opcional_id = {$opcional->getId()}
+            )";
         }
     }
 

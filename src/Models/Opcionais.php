@@ -30,6 +30,19 @@ class Opcionais
         return $this->montaOpcionais($dados);
     }
 
+    public function buscaPorNome(string $nome)
+    {
+        $sql = 'SELECT id, nome FROM opcionais WHERE nome = "' . $nome . '" LIMIT 1';
+        $result = $this->conn->query($sql);
+        $dados = $result->fetch_assoc();
+
+        if (is_null($dados)) {
+            throw new \InvalidArgumentException('Opcional não encontrado ou inexistente!', 422);
+        }
+
+        return $this->montaOpcionais($dados);
+    }
+
     /**
      * Retona um array list com os Opcionais através do array de Ids informados
      *

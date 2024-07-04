@@ -50,12 +50,55 @@ class OpcionaisVersoes
         return $this->montaOpcionalVersao($dados);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return \RevendaTeste\Entity\OpcionalVersao[]
+     */
     public function buscaOpcionaisVersoes(): array
     {
+        $opcionaisVersoes = [];
+
         $sql = 'SELECT id, versao_id, opcional_id FROM opcionais_versoes';
         $result = $this->conn->query($sql);
         while ($row = $result->fetch_assoc()) {
             $opcionaisVersoes[] = $this->montaOpcionalVersao($row);
+        }
+
+        return $opcionaisVersoes;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return \RevendaTeste\Entity\OpcionalVersao[]
+     */
+    public function buscaOpcionaisVersoesPorIdOpcional(int $opcionalId): array
+    {
+        $opcionaisVersoes = [];
+
+        $sql = 'SELECT id, versao_id, opcional_id FROM opcionais_versoes WHERE opcional_id = ' . $opcionalId;
+        $result = $this->conn->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            $opcionaisVersoes[] = $this->montaOpcionalVersao($row, ['versao']);
+        }
+
+        return $opcionaisVersoes;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return \RevendaTeste\Entity\OpcionalVersao[]
+     */
+    public function buscaOpcionaisVersoesPorIdVersao(int $versaoId): array
+    {
+        $opcionaisVersoes = [];
+
+        $sql = 'SELECT id, versao_id, opcional_id FROM opcionais_versoes WHERE versao_id = ' . $versaoId;
+        $result = $this->conn->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            $opcionaisVersoes[] = $this->montaOpcionalVersao($row, ['opcional']);
         }
 
         return $opcionaisVersoes;
@@ -102,9 +145,10 @@ class OpcionaisVersoes
      * Monta os dados do OpcionalVersao
      *
      * @param array|null $dados
+     * @param bool $buscarRelacionados  default=false - Se deve buscar os objetos relacionados (belongsTo)
      * @return OpcionalVersao|null
      */
-    public function montaOpcionalVersao(array|null $dados): OpcionalVersao|null
+    public function montaOpcionalVersao(array|null $dados, array $relacionados = ['versao', 'opcional']): OpcionalVersao|null
     {
         if (is_null($dados)) {
             return $dados;
@@ -115,16 +159,21 @@ class OpcionaisVersoes
         if (!empty($dados['id'])) {
             $opcionalVersao->setId((int) $dados['id']);
         }
-        if (!empty($dados['versao_id'])) {
-            $versao = new Versoes();
-            $opcionalVersao->setVersao($versao->buscaPorId($dados['versao_id']));
+
+        if (in_array('versao', $relacionados)) {
+            if (!empty($dados['versao_id'])) {
+                $versao = new Versoes();
+                $opcionalVersao->setVersao($versao->buscaPorId($dados['versao_id']));
+            }
         }
-        if (!empty($dados['opcional_id'])) {
-            $opcional = new Opcionais();
-            $opcionalVersao->setOpcional($opcional->buscaPorId($dados['opcional_id']));
+
+        if (in_array('opcional', $relacionados)) {
+            if (!empty($dados['opcional_id'])) {
+                $opcional = new Opcionais();
+                $opcionalVersao->setOpcional($opcional->buscaPorId($dados['opcional_id']));
+            }
         }
 
         return $opcionalVersao;
-
     }
 }

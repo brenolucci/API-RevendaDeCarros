@@ -16,9 +16,21 @@ trait ObjectToArray
         $array = [];
         foreach ($reflectionClass->getProperties() as $property) {
             $property->setAccessible(true);
-            $array[$property->getName()] = (is_object($property->getValue($object))) ?
-                $this->toArray($property->getValue($object)) :
-                $property->getValue($object);
+
+            if ($property->isInitialized($object) === false) {
+                continue;
+            }
+
+            if (is_object($property->getValue($object))) {
+                $array[$property->getName()] = $this->toArray($property->getValue($object));
+            } elseif (is_array($property->getValue($object))) {
+                foreach ($property->getValue($object) as $item) {
+                    $array[$property->getName()][] = $this->toArray($item);
+                }
+            } else {
+                $array[$property->getName()] = $property->getValue($object);
+            }
+
             $property->setAccessible(false);
         }
 

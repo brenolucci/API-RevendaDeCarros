@@ -28,7 +28,6 @@ class OpcionalVersao
      */
     private Opcional $opcional;
 
-
     /**
      * Define o id de opcional_versao
      *

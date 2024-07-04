@@ -71,6 +71,13 @@ class Versao
     private string $localizacao;
 
     /**
+     * Lista de opcionais da versão
+     *
+     * @var array
+     */
+    private array $opcionais_versao = [];
+
+    /**
      * Define o id da versão
      *
      * @param int $id
@@ -266,4 +273,32 @@ class Versao
         return $this->localizacao;
     }
 
+    /**
+     * Define os opcionais da versão
+     *
+     * @param \RevendaTeste\Entity\OpcionalVersao[] $opcionais
+     * @return Versao
+     */
+    public function setOpcionais(array $opcionais): Versao
+    {
+        foreach ($opcionais as $opcional) {
+            if (!$opcional instanceof \RevendaTeste\Entity\OpcionalVersao) {
+                throw new \InvalidArgumentException('O opcional ' . print_r($opcional, 1) . ' é inválido!');
+            }
+        }
+
+        $this->opcionais_versao = $opcionais;
+
+        return $this;
+    }
+
+    /**
+     * Retorna os opcionais da versão
+     *
+     * @return \RevendaTeste\Entity\OpcionalVersao[] 
+     */
+    public function getOpcionais(): array
+    {
+        return $this->opcionais_versao;
+    }
 }

@@ -34,9 +34,9 @@ class Versoes extends Database
 
     public function buscaFiltrada(string $sqlFiltro, bool $asArray = false): array
     {
-        $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes ' . $sqlFiltro;
-        var_dump($sql);
-        die;
+        $sql = 'SELECT * FROM versoes ' . $sqlFiltro;
+        // var_dump($sql);
+        // die;
         $result = $this->getConnection()->query($sql);
         while ($row = $result->fetch_assoc()) {
             $versoes[] = ($asArray) ? $this->toArray($this->montaVersao($row)) : $this->montaVersao($row);
@@ -93,15 +93,12 @@ class Versoes extends Database
             throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
         }
 
-
         return $this->montaVersao($dados);
     }
 
     public function filtraVersoes($conditions)
     {
         $sql = 'SELECT id, modelo_id, combustivel_id, nome, km, ano, ano_modelo, quilometragem, localizacao FROM versoes';
-
-
         if (!empty($conditions)) {
             $sql .= $conditions;
         }
@@ -158,6 +155,7 @@ class Versoes extends Database
 
         $modelo = new Modelos();
         $combustivel = new Combustiveis();
+        $opcionaisVersao = new OpcionaisVersoes();
 
         $versao->setId((int) $dados['id'])
             ->setNome((string) $dados['nome'])
@@ -169,6 +167,7 @@ class Versoes extends Database
 
         $versao->setModelo($modelo->buscaPorId($dados['modelo_id']));
         $versao->setCombustivel($combustivel->buscaPorId($dados['combustivel_id']));
+        $versao->setOpcionais($opcionaisVersao->buscaOpcionaisVersoesPorIdVersao((int) $dados['id']));
 
         return $versao;
     }
