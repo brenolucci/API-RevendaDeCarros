@@ -12,12 +12,21 @@ class Opcionais
 
     private \mysqli $conn;
 
+    /**
+     * Construtor de Opcionais
+     */
     public function __construct()
     {
         $this->conn = (new DataBase())->getConnection();
     }
 
-    public function buscaPorId(int $id)
+    /**
+     * Retorna Opcionais através do id fornecido
+     *
+     * @param int $id
+     * @return Opcional
+     */
+    public function buscaPorId(int $id): Opcional
     {
         $sql = 'SELECT id, nome FROM opcionais WHERE id = ' . $id . ' LIMIT 1';
         $result = $this->conn->query($sql);
@@ -30,7 +39,13 @@ class Opcionais
         return $this->montaOpcionais($dados);
     }
 
-    public function buscaPorNome(string $nome)
+    /**
+     * Retorna Opcionais através do nome fornecido
+     *
+     * @param string $nome
+     * @return Opcional
+     */
+    public function buscaPorNome(string $nome): Opcional
     {
         $sql = 'SELECT id, nome FROM opcionais WHERE nome = "' . $nome . '" LIMIT 1';
         $result = $this->conn->query($sql);
@@ -59,6 +74,12 @@ class Opcionais
         return $data;
     }
 
+    /**
+     * Retorna lista de todos os opcionais
+     *
+     * @param boolean $asArray
+     * @return array
+     */
     public function buscaOpcionais(bool $asArray = false): array
     {
         $sql = 'SELECT id, nome FROM opcionais';
@@ -70,6 +91,12 @@ class Opcionais
         return $opcionais;
     }
 
+    /**
+     * Monta objeto Opcionais
+     *
+     * @param array $dados
+     * @return Opcional
+     */
     public function montaOpcionais(array $dados): Opcional
     {
         $opcional = new Opcional;

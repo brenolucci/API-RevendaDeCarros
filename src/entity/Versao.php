@@ -4,6 +4,7 @@ namespace RevendaTeste\Entity;
 
 use RevendaTeste\Entity\Modelo;
 use RevendaTeste\Entity\Combustivel;
+use RevendaTeste\Entity\Imagem;
 
 class Versao
 {
@@ -76,6 +77,14 @@ class Versao
      * @var array
      */
     private array $opcionais_versao = [];
+
+    /**
+     * Imagem da versao
+     *
+     * @var Imagem[]
+     */
+    private array $imagens;
+
 
     /**
      * Define o id da versão
@@ -300,5 +309,23 @@ class Versao
     public function getOpcionais(): array
     {
         return $this->opcionais_versao;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $imagem
+     * @return \RevendaTeste\Entity\Versao
+     */
+    public function setImagem(array $imagem): Versao
+    {
+        $this->imagens = $imagem;
+
+        return $this;
+    }
+
+    public function getImagem(): array
+    {
+        return $this->imagens;
     }
 }

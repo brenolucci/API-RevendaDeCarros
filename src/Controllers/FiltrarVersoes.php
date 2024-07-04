@@ -28,20 +28,6 @@ $sqlConditions = (empty($condicoes)) ? '' : 'WHERE ' . implode(' AND ', $condico
 $versao = (new Versoes())->buscaFiltrada($sqlConditions, true);
 echo json_encode($versao, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
-// if (in_array('marca_id', $condicoes)) {
-//     $marca = (new Marcas())->buscaPorNome(trim($dados['marca']));
-//     if (!is_null($marca)) {
-//         $marcaId = $marca->getId();
-//     }
-//     $sql = 'SELECT id, marca_id, nome FROM modelos WHERE marca_id = ' . $marcaId;
-//     print_r($sql);
-// }
-
-// $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes ' . $sqlConditions;
-// $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes ' . $sqlConditions;
-
-
-
 /**
  * Monta as condições de pesquisa
  *
@@ -49,7 +35,6 @@ echo json_encode($versao, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON
  * @param array $dados
  * @return array
  */
-
 function montarCondicoes(array $filtros, array $dados): array
 {
     $condicoes = [];
@@ -106,6 +91,5 @@ function montarCondicoes(array $filtros, array $dados): array
             )";
         }
     }
-
     return $condicoes;
 }

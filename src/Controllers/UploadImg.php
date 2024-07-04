@@ -18,11 +18,10 @@ $response = ['status' => 'error', 'message' => ''];
 try {
     $versoes = new Versoes();
 
-    $versoes->beginTransaction();
-
     $data = $_POST;
 
     $versao = $versoes->cadastraVersao($data);
+    $versoes->beginTransaction();
 
     //Converte a string de opcionais $data['opcionais'] em um array de int.
     $opcoes = explode(',', $data['opcionais']);
@@ -53,7 +52,6 @@ try {
         if (!in_array($extensao, ['jpg', 'jpeg', 'webp', 'png', 'gif', 'tiff'])):
             throw new Exception('Formato de arquivo inválido!', 422);
         endif;
-
         $created = new \DateTime();
         $filepath = [
             FILES_DIR,
@@ -74,6 +72,7 @@ try {
 
         $newName = uniqid(time()) . '.' . $extensao;
         $imagens = new Imagens;
+
         $imagem = $imagens->cadastraImagem($versao->getId(), $dir . $newName);
 
         if (move_uploaded_file($tmpName, $dir . $newName) === false):

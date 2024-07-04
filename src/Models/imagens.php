@@ -6,6 +6,7 @@ use \RevendaTeste\ORM\Database;
 use RevendaTeste\Entity\Imagem;
 use RevendaTeste\Models\Versoes;
 
+
 class Imagens
 {
 
@@ -18,7 +19,7 @@ class Imagens
 
     public function buscaPorId($id)
     {
-        $sql = 'SELECT id, img_url, criado_em, versao_id FROM imagens WHERE id = ' . $id . ' LIMIT 1';
+        $sql = 'SELECT id, img_url, criado_em FROM imagens WHERE id = ' . $id . ' LIMIT 1';
         $result = $this->conn->query($sql);
 
         return $this->montaImagens(
@@ -29,9 +30,13 @@ class Imagens
     public function cadastraImagem(int $versao, string $url)
     {
         $data = [];
-        $sql = "INSERT INTO imagens (versao_id, img_url) VALUES ({$versao}, '{$url}')";
+
+        $str = str_replace(FILES_DIR, 'http://localhost/revendaCarro/hmtl/files/', $url);
+        $newUrl = str_replace(DS, '/', $str);
+        $sql = "INSERT INTO imagens (versao_id, img_url) VALUES ({$versao}, '{$newUrl}')";
 
         $result = ($this->conn->query($sql));
+
 
         $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM versoes';
         $result = mysqli_fetch_assoc($this->conn->query($sql));
@@ -45,7 +50,18 @@ class Imagens
 
     public function buscarImagens(): array
     {
-        $sql = 'SELECT id, img_url, criado_em, versao_id FROM imagens';
+        $sql = 'SELECT id, img_url, criado_em FROM imagens';
+        $result = $this->conn->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            $imagens[] = $this->montaImagens($row);
+        }
+        return $imagens;
+    }
+
+    public function buscarImagensPorVersao(int $versaoId): array
+    {
+        $imagens = [];
+        $sql = 'SELECT id, img_url, criado_em FROM imagens WHERE versao_id = ' . $versaoId;
         $result = $this->conn->query($sql);
         while ($row = $result->fetch_assoc()) {
             $imagens[] = $this->montaImagens($row);
@@ -66,11 +82,6 @@ class Imagens
         if (!empty($dados['criado_em'])) {
             $imagem->setCriadoem($dados['criado_em']);
         }
-        if (!empty($dados['versao_id'])) {
-            $versao = new Versoes();
-            $imagem->setVersao($versao->buscaPorId($dados['versao_id']));
-        }
-
         return $imagem;
     }
 }

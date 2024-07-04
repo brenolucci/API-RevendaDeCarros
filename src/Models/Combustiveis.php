@@ -51,6 +51,12 @@ class Combustiveis
 
     }
 
+    /**
+     * Retorna lista de combustíveis
+     *
+     * @param boolean $asArray
+     * @return array
+     */
     public function buscaCombustiveis(bool $asArray = false): array
     {
         $sql = 'SELECT id, nome FROM combustiveis';
@@ -62,6 +68,12 @@ class Combustiveis
         return $combustiveis;
     }
 
+    /**
+     * Retorna um objeto contruído do tipo Combustível
+     *
+     * @param array $dados
+     * @return Combustivel
+     */
     public function montaCombustiveis(array $dados): Combustivel
     {
         $combustivel = new Combustivel;

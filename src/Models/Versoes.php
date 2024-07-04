@@ -32,6 +32,13 @@ class Versoes extends Database
         return $this->montaVersao($dados);
     }
 
+    /**
+     * Retorna uma lista de versões através dos filtros inseridos
+     *
+     * @param string $sqlFiltro
+     * @param boolean $asArray
+     * @return array
+     */
     public function buscaFiltrada(string $sqlFiltro, bool $asArray = false): array
     {
         $sql = 'SELECT * FROM versoes ' . $sqlFiltro;
@@ -67,6 +74,12 @@ class Versoes extends Database
     }
 
 
+    /**
+     * Retorna uma versão através do preço fornecido
+     *
+     * @param integer $preco
+     * @return Versao
+     */
     public function buscaPorPreco(int $preco): Versao
     {
 
@@ -83,6 +96,12 @@ class Versoes extends Database
     }
 
 
+    /**
+     * Retorna uma versão através da quilometragem fornecida
+     *
+     * @param string $km
+     * @return Versao
+     */
     public function buscaPorKm(string $km): Versao
     {
 
@@ -96,7 +115,13 @@ class Versoes extends Database
         return $this->montaVersao($dados);
     }
 
-    public function filtraVersoes($conditions)
+    /**
+     * Retorna um sql montado através dos filtros de busca fornecidos.
+     *
+     * @param string $conditions
+     * @return string
+     */
+    public function filtraVersoes(string $conditions): string
     {
         $sql = 'SELECT id, modelo_id, combustivel_id, nome, km, ano, ano_modelo, quilometragem, localizacao FROM versoes';
         if (!empty($conditions)) {
@@ -106,6 +131,12 @@ class Versoes extends Database
         return $sql;
     }
 
+    /**
+     * Retorna uma lista de todas as versões
+     *
+     * @param boolean $asArray
+     * @return array
+     */
     public function buscaVersoes(bool $asArray = false): array
     {
         $sql = 'SELECT id, modelo_id, combustivel_id, nome, preco, ano, ano_modelo, quilometragem, localizacao FROM versoes';
@@ -117,6 +148,12 @@ class Versoes extends Database
         return $versoes;
     }
 
+    /**
+     * Cadastra uma nova versão no banco de dados com os dados fornecidos
+     *
+     * @param array $data
+     * @return Versao
+     */
     function cadastraVersao(array $data): Versao
     {
         $sql = "INSERT INTO versoes (
@@ -149,6 +186,12 @@ class Versoes extends Database
         return $this->montaVersao($data);
     }
 
+    /**
+     * Retorna uma versao montada
+     *
+     * @param array $dados
+     * @return Versao
+     */
     public function montaVersao(array $dados): Versao
     {
         $versao = new Versao();
@@ -156,6 +199,7 @@ class Versoes extends Database
         $modelo = new Modelos();
         $combustivel = new Combustiveis();
         $opcionaisVersao = new OpcionaisVersoes();
+        $imagem = new Imagens();
 
         $versao->setId((int) $dados['id'])
             ->setNome((string) $dados['nome'])
@@ -168,6 +212,8 @@ class Versoes extends Database
         $versao->setModelo($modelo->buscaPorId($dados['modelo_id']));
         $versao->setCombustivel($combustivel->buscaPorId($dados['combustivel_id']));
         $versao->setOpcionais($opcionaisVersao->buscaOpcionaisVersoesPorIdVersao((int) $dados['id']));
+        $versao->setImagem($imagem->buscarImagensPorVersao((int) $dados['id']));
+
 
         return $versao;
     }
