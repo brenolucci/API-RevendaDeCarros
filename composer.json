@@ -4,5 +4,8 @@
         "psr-4": {
             "RevendaTeste\\": "src/"
         }
+    },
+    "require": {
+        "firebase/php-jwt": "^6.10"
     }
 }

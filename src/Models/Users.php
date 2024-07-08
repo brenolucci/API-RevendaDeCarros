@@ -34,30 +34,49 @@ class Users
         return $users;
     }
 
-    /**
-     * Verifica se o usuário existe no banco de dados
-     *
-     * @param array $dados
-     * @return User
-     */
-    public function login(array $dados): User
+
+    public function registrar(array $dados): User
     {
-        $sql = 'SELECT id, nome, email, senha FROM users WHERE email = ' . "'{$dados['email']}'" . 'AND senha = ' . "'{$dados['senha']}'" . 'LIMIT 1';
+        $sql = "INSERT INTO users ( nome, email, senha ) 
+        VALUES ( '{$dados['nome']}', '{$dados['email']}', '{$dados['senha']}' )";
         $result = $this->conn->query($sql);
-        $assoc = $result->fetch_assoc();
 
-        if (!$assoc) {
-            throw new \InvalidArgumentException('Versão não encontrada ou inexistente!', 422);
-        }
+        // Obtém o ID recém inserido
+        $sql = 'SELECT LAST_INSERT_ID() AS last_id FROM users';
+        $result = mysqli_fetch_assoc($this->conn->query($sql));
+        $dados['id'] = $result['last_id'];
 
-        return $this->montaUser(
-            $assoc
-        );
-
+        return $this->montaUser($dados);
     }
+
     public function buscaPorId(int $id): User
     {
         $sql = 'SELECT id, nome, email, senha FROM users WHERE id = ' . $id . ' LIMIT 1';
+        $result = $this->conn->query($sql);
+
+        return $this->montaUser(
+            $result->fetch_assoc()
+        );
+
+    }
+    public function buscaPorEmail(string $email): bool
+    {
+        $sql = 'SELECT id, nome, email, senha FROM users WHERE email = ' . "'{$email}'" . ' LIMIT 1';
+
+        $result = $this->conn->query($sql);
+
+        $assoc = $result->fetch_assoc();
+
+        if (!is_null($assoc)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function buscaLogin(string $email): User
+    {
+        $sql = 'SELECT id, nome, email, senha FROM users WHERE email = ' . "'{$email}'" . ' LIMIT 1';
+
         $result = $this->conn->query($sql);
 
         return $this->montaUser(

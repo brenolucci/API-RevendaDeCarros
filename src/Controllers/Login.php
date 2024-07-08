@@ -9,25 +9,36 @@ header('Content-Type: application/json');
 require_once (realpath(dirname(__FILE__) . '/../../') . '/vendor/autoload.php');
 
 use \RevendaTeste\Models\Users;
-use RevendaTeste\Traits\ObjectToArray;
+use RevendaTeste\Requests\MyJWT;
 
 
 try {
     $data = json_decode(file_get_contents('php://input'), true);
 
     $users = new Users();
-    $user = $users->login($data);
+    $validaEmail = $users->buscaPorEmail($data['email']);
+    if ($validaEmail === false) {
+        throw new \InvalidArgumentException('Email não cadastrado!', 400);
+    }
+    $user = $users->buscaLogin($data['email']);
+    $userArray = $users->toArray($user);
 
-    $generatesToken = 'dsadgadasdgfas';
+    $validaSenha = password_verify($data['senha'], $userArray['senha']);
+    if ($validaSenha !== true) {
+        throw new \InvalidArgumentException('Senha incorreta!', 400);
+    }
 
-    if ($generatesToken) {
-        $user->setToken($generatesToken);
+    $jwt = new MyJWT;
+    $token = $jwt->encodeJWT($userArray);
+
+    if ($token) {
+        $user->setToken($token);
     }
 
     $statusCode = 200;
     $result = [
         'message' => 'Login bem sucedido!',
-        'data' => $users->toArray($user)
+        'accessToken' => $token
     ];
 
 } catch (\Exception $e) {
