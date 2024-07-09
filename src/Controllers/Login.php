@@ -2,6 +2,8 @@
 
 namespace RevendaTeste\Controllers;
 
+// session_start(); // Inicia uma sessão baseada em Cookies no lado servidor
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json');

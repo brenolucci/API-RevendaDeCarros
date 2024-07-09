@@ -4,6 +4,7 @@ namespace RevendaTeste\Models;
 
 use RevendaTeste\Entity\User;
 use RevendaTeste\ORM\Database;
+use RevendaTeste\Requests\MyJWT;
 use RevendaTeste\Traits\ObjectToArray;
 
 class Users
@@ -22,7 +23,12 @@ class Users
         $this->conn = (new Database())->getConnection();
     }
 
-
+    /**
+     * Retorna uma lista com todos os usuários
+     *
+     * @param boolean $asArray
+     * @return array
+     */
     public function buscaUsers(bool $asArray = false): array
     {
         $sql = 'SELECT id, nome, email, senha FROM users';
@@ -34,6 +40,15 @@ class Users
         return $users;
     }
 
+    public function buscaPorToken(string $token): User
+    {
+        $jwt = new MyJWT;
+        $user = $jwt->decodeJWT($token);
+
+        print_r($user);
+        die;
+
+    }
 
     public function registrar(array $dados): User
     {

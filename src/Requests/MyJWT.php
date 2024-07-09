@@ -4,6 +4,7 @@ namespace RevendaTeste\Requests;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use RevendaTeste\Entity\User;
 
 class MyJWT
 {
@@ -24,11 +25,16 @@ class MyJWT
     /**
      * Codifica o payload e retorna um token JWT
      *
-     * @param array $payload
+     * @param array $userPayload
      * @return string
      */
-    public function encodeJWT(array $payload): string
+    public function encodeJWT(array $userPayload): string
     {
+        $payload = [
+            "exp" => time() + 3600,
+            "iat" => time(),
+            "user" => $userPayload
+        ];
         $token = JWT::encode($payload, $this->key, 'HS256');
         return $token;
 
@@ -38,11 +44,18 @@ class MyJWT
      * Decodifica o Token JWT e retorna o objeto decodificado
      *
      * @param string $token
-     * @return void
+     * @return
      */
     public function decodeJWT(string $token)
     {
         $decoded = JWT::decode($token, new Key($this->key, 'HS256'));
-        return;
+        return $decoded;
+    }
+
+    public function autenticaRota(string $token): bool
+    {
+        $this->decodeJWT($token);
+
+        return true;
     }
 }
